@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bloom Talent | Juego de evaluación de competencias</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050b1f;--bg2:#0a1535;--text:#f4f7ff;--muted:#a9b6d6;--cyan:#18c3e6;--teal:#1aa6b7;--violet:#7b4fd8;--line:rgba(24,195,230,.35);--card:rgba(10,21,53,.75);--ok:#3ddc97;--bad:#ff6b81;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f2f6ff;--bg2:#e2ebff;--text:#0b1636;--muted:#40507a;--card:rgba(255,255,255,.85);--line:rgba(14,120,160,.45);--cyan:#0a86a8;--ok:#13804f;--bad:#c2243e}}
+:root[data-theme="light"]{--bg:#f2f6ff;--bg2:#e2ebff;--text:#0b1636;--muted:#40507a;--card:rgba(255,255,255,.85);--line:rgba(14,120,160,.45);--cyan:#0a86a8;--ok:#13804f;--bad:#c2243e}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--text);font-family:'Montserrat',system-ui,sans-serif;font-weight:300;line-height:1.6;min-height:100vh;
+background-image:radial-gradient(800px 500px at 85% 0%,rgba(41,98,255,.28),transparent 60%),radial-gradient(600px 500px at 0% 70%,rgba(123,79,216,.2),transparent 60%)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;display:flex;justify-content:space-between;align-items:center;padding:12px 5vw;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.logo{font-family:'Poppins',sans-serif;font-weight:600;display:flex;gap:8px;align-items:center}
+.tbtn,button{font-family:inherit}
+.tbtn{background:none;border:1px solid var(--line);color:var(--text);border-radius:999px;padding:6px 12px;cursor:pointer}
+main{max-width:980px;margin:0 auto;padding:40px 5vw 70px}
+.display{font-family:'Bebas Neue',Impact,sans-serif;font-weight:400;line-height:.92;margin:0;font-size:clamp(3rem,10vw,6rem)}
+.c{color:var(--cyan)}
+.lead{font-family:'Poppins',sans-serif;font-size:1.15rem;max-width:44ch;margin:14px 0 26px}
+.rule{width:130px;height:2px;background:var(--cyan);margin:18px 0}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+input{width:100%;max-width:340px;padding:12px 16px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--text);font:inherit;margin-bottom:24px}
+.roles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.role{text-align:left;padding:20px;border:1px solid var(--line);border-radius:18px;background:var(--card);color:var(--text);cursor:pointer;transition:.2s}
+.role:hover{box-shadow:0 0 26px rgba(24,195,230,.4);transform:translateY(-3px)}
+.role .e{font-size:2rem;display:block}.role b{font-family:'Poppins';font-weight:600;display:block;margin:6px 0 4px}.role small{color:var(--muted)}
+.hud{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:center;font-size:.9rem;color:var(--muted)}
+.hud b{color:var(--cyan);font-weight:600}
+.track{height:8px;border-radius:9px;background:rgba(120,140,200,.25);overflow:hidden;margin:10px 0}
+.track i{display:block;height:100%;background:linear-gradient(90deg,var(--teal),var(--violet));transition:width .3s}
+#timer i{background:var(--cyan);transition:width 1s linear}
+.card{border:1px solid var(--line);border-radius:24px;padding:28px;background:var(--card);margin-top:18px}
+.tag{display:inline-block;font-size:.8rem;padding:4px 12px;border-radius:999px;border:1px solid var(--cyan);color:var(--cyan)}
+.card h2{font-family:'Poppins',sans-serif;font-weight:600;font-size:clamp(1.15rem,3vw,1.5rem);line-height:1.35;margin:14px 0 18px}
+.opt{display:block;width:100%;text-align:left;padding:14px 18px;margin:10px 0;border-radius:14px;border:1px solid var(--line);background:transparent;color:var(--text);cursor:pointer;font-size:.98rem;transition:.15s}
+.opt:hover:not(:disabled){border-color:var(--cyan);background:rgba(24,195,230,.1)}
+.opt.best{border-color:var(--ok);background:rgba(61,220,151,.15)}.opt.pick{border-color:var(--bad)}
+.opt:disabled{cursor:default}
+#fb{min-height:1.6em;margin-top:10px;font-family:'Poppins';font-weight:400}
+.btn{display:inline-block;padding:13px 28px;border-radius:999px;border:0;background:linear-gradient(90deg,var(--teal),var(--violet));color:#fff;font-weight:500;cursor:pointer;font-size:1rem}
+.btn.ghost{background:none;border:1px solid var(--cyan);color:var(--text)}
+.btn:hover{box-shadow:0 0 24px rgba(24,195,230,.5)}
+.res{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:center}
+.big{font-family:'Poppins';font-weight:600;font-size:clamp(2rem,6vw,3.2rem);color:var(--cyan);line-height:1.1}
+.row{margin:14px 0}.row div{display:flex;justify-content:space-between;font-size:.9rem}
+.rec li{margin:6px 0}
+svg text{fill:var(--muted);font-size:8px;font-family:Montserrat,sans-serif}
+.hide{display:none}
+@media(max-width:760px){.res{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+a.role{text-decoration:none}
+label{font-size:.9rem;color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--cyan);font-weight:600}
+select.tbtn{background:var(--card);color:var(--text)}
+img,svg{max-width:100%}
+.opt,.card h2,.role{overflow-wrap:anywhere}
+#radar{display:block;width:100%;max-width:380px;margin:0 auto}
+.tbtn,.opt,.btn,.role{min-height:44px}
+@media(max-width:1000px){main{max-width:760px}.roles,.cgrid{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}}
+@media(max-width:700px){
+ header{flex-direction:column;align-items:stretch;gap:10px;padding:10px 4vw}
+ header>div:last-child{width:100%}
+ header>div:last-child .tbtn{flex:1;padding:8px 6px;font-size:.82rem}
+ main{padding:26px 4vw 50px}
+ .card{padding:18px;border-radius:18px}
+ .opt{padding:13px 14px;font-size:.95rem}
+ .hud{font-size:.8rem;gap:6px 14px}
+ .btn{width:100%;text-align:center}
+ .lead{font-size:1rem}
+ input{max-width:100%}
+ .roles,.cgrid{grid-template-columns:1fr 1fr}
+ th,td{padding:8px;font-size:.82rem}
+ .big{font-size:1.8rem}
+}
+@media(max-width:430px){.roles,.cgrid{grid-template-columns:1fr}.role{padding:16px}header .logo{font-size:1rem}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="18" rx="7" ry="14" fill="#7b4fd8"/><ellipse cx="18" cy="26" rx="6" ry="13" fill="#1aa6b7" transform="rotate(-40 18 26)"/><ellipse cx="46" cy="26" rx="6" ry="13" fill="#18c3e6" transform="rotate(40 46 26)"/><circle cx="32" cy="40" r="5" fill="#4b3fb8"/></svg>Bloom Talent</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="tbtn" id="go-game">Juego</button><button class="tbtn" id="go-contact">Contacto</button><button class="tbtn" id="go-admin">Administrador</button><button class="tbtn" id="theme">Tema</button></div>
+</header>
+<main>
+<section id="s-start">
+  <h1 class="display">Bloom<br><span class="c">Quest</span></h1>
+  <p class="lead">Elige el cargo, cumple siete misiones y descubre tus habilidades técnicas y blandas. “Encontramos talento, cultivamos bienestar”.</p>
+  <label for="nm" class="lead" style="display:block;margin:0 0 8px;font-size:1rem">¿Cómo te llamas?</label>
+  <input id="nm" placeholder="Tu nombre" maxlength="30" autocomplete="name">
+  <p class="lead" style="font-size:1rem;margin:0 0 12px">¿A qué cargo aspiras?</p>
+  <div class="roles" id="roles"></div>
+  <div id="contacto" style="margin-top:70px">
+    <h2 class="display" style="font-size:clamp(2.4rem,7vw,4rem)">Contacta a <span class="c">Bloom Talent</span></h2>
+    <p class="lead">¿Quieres usar Bloom Quest en tu empresa o institución educativa? Escríbenos y armamos un plan para tus vacantes.</p>
+    <div class="cgrid">
+      <a class="role" href="mailto:contacto@bloomtalent.co"><span class="e">✉️</span><b>Correo</b><small>contacto@bloomtalent.co</small></a>
+      <a class="role" href="https://wa.me/573000000000" target="_blank" rel="noopener"><span class="e">💬</span><b>WhatsApp</b><small>+57 300 000 0000</small></a>
+      <div class="role"><span class="e">📍</span><b>Ubicación</b><small>Colombia</small></div>
+    </div>
+    <p style="color:var(--muted);margin-top:22px;font-size:.9rem">Equipo Bloom Talent: Ingrid Valentina Vargas, Johanna Marcela Rodríguez y Sonia Maritza Hernández.</p>
+  </div>
+</section>
+
+<section id="s-play" class="hide">
+  <div class="hud"><span>Jugador/a: <b id="h-name"></b></span><span id="h-role"></span><span>XP: <b id="h-xp">0</b></span><span id="h-st"></span></div>
+  <div class="track" aria-label="Progreso"><i id="prog" style="width:0"></i></div>
+  <div class="card">
+    <span class="tag" id="tag"></span>
+    <div class="track" id="timer" aria-label="Tiempo"><i style="width:100%"></i></div>
+    <h2 id="q"></h2>
+    <div id="opts"></div>
+    <div id="fb" aria-live="polite"></div>
+    <div style="margin-top:14px"><button class="btn hide" id="next">Siguiente misión</button></div>
+  </div>
+</section>
+
+<section id="s-end" class="hide">
+  <h2 class="display">Resultados<br><span class="c" id="r-title"></span></h2>
+  <div class="card res">
+    <div><svg id="radar" viewBox="-30 -10 160 130" role="img" aria-label="Gráfico de habilidades"></svg></div>
+    <div>
+      <div class="big" id="r-level"></div>
+      <p id="r-msg" class="lead" style="margin:8px 0 14px"></p>
+      <div class="row"><div><span>Habilidades técnicas</span><b id="r-t"></b></div><div class="track"><i id="b-t"></i></div></div>
+      <div class="row"><div><span>Habilidades blandas</span><b id="r-b"></b></div><div class="track"><i id="b-b"></i></div></div>
+      <div class="row"><div><span>XP total</span><b id="r-xp"></b></div></div>
+    </div>
+  </div>
+  <div class="card"><h2 style="margin-top:0">Recomendaciones para seguir creciendo</h2><ul class="rec" id="rec"></ul>
+    <div class="det" id="det"></div>
+    <button class="btn" id="again" style="margin-top:12px">Jugar con otro cargo</button></div>
+</section>
+<section id="s-admin" class="hide">
+  <h2 class="display">Panel<br><span class="c">administrador</span></h2>
+  <div id="a-login" class="card" style="max-width:420px">
+    <h2 style="margin-top:0">Inicia sesión</h2>
+    <label for="a-u">Usuario</label><input id="a-u" autocomplete="username" style="margin:6px 0 14px">
+    <label for="a-p">Contraseña</label><input id="a-p" type="password" autocomplete="current-password" style="margin:6px 0 14px">
+    <div id="a-err" style="color:var(--bad);min-height:1.4em" aria-live="polite"></div>
+    <button class="btn" id="a-go">Entrar</button>
+  </div>
+  <div id="a-panel" class="hide">
+    <div class="card">
+      <div class="hud"><span>Candidatos evaluados: <b id="a-n">0</b></span><span>Promedio general: <b id="a-avg">0%</b></span>
+        <span><label for="a-f">Cargo </label><select id="a-f" class="tbtn"></select></span><button class="tbtn" id="a-out">Cerrar sesión</button></div>
+      <div style="overflow-x:auto;margin-top:14px"><table id="a-t"><thead><tr><th>Fecha</th><th>Candidato</th><th>Cargo</th><th>Técnicas</th><th>Blandas</th><th>General</th><th>Nivel</th></tr></thead><tbody></tbody></table></div>
+      <p id="a-empty" style="color:var(--muted)"></p>
+    </div>
+  </div>
+</section>
+</main>
+
+<script>
+var SOFT=["Comunicación","Trabajo en equipo","Adaptabilidad","Liderazgo"];
+var SQ=[
+["Un compañero no entregó su parte y el cierre es mañana. ¿Qué haces primero?",[["Lo reportas al jefe sin hablar con él",0],["Hablas con él para entender qué pasó y acuerdan cómo cubrirlo",3],["Haces todo tú en silencio",1]],1],
+["Debes explicar un cambio importante a alguien que no conoce el tema. ¿Cómo lo haces?",[["Con lenguaje claro, un ejemplo y preguntas para confirmar que entendió",3],["Envías un documento largo con todos los detalles",1],["Le pides que lo lea por su cuenta",0]],0],
+["A mitad del proyecto, el cliente cambia las prioridades. ¿Cuál es tu reacción?",[["Sigues el plan original",0],["Te quejas del cambio con el equipo",0],["Analizas el impacto, ajustas el plan y lo comunicas",3],["Esperas instrucciones de alguien más",1]],2],
+["Tu equipo está bloqueado y dividido entre dos opciones. ¿Qué haces?",[["Impones tu opción",1],["Reúnes los argumentos, fijas criterios y propones decidir con evidencia",3],["Dejas que decida la mayoría sin discutir",1]],3]];
+var ROLES=[
+{n:"Desarrollador/a de software",e:"💻",d:"Código, calidad y seguridad",sk:["Resolución técnica","Calidad de código","Seguridad"],q:[
+["Una función tarda 8 segundos con 10.000 registros. ¿Cuál es el mejor primer paso?",[["Reescribir todo el módulo",0],["Medir y perfilar para encontrar el cuello de botella",3],["Pedir un servidor más grande",1]],0],
+["Vas a unir tu rama y hay conflicto con el trabajo de otra persona. ¿Qué haces?",[["Sobrescribes con tu versión",0],["Revisas ambos cambios, lo resuelves y corres las pruebas",3],["Borras la rama y empiezas de nuevo",1]],1],
+["Un formulario guarda datos de usuarios. ¿Cómo evitas una inyección SQL?",[["Consultas parametrizadas y validación de entradas",3],["Ocultar el formulario",0],["Confiar en el navegador",0]],2]]},
+{n:"Analista de datos",e:"📊",d:"Análisis, calidad e interpretación",sk:["Análisis","Calidad de datos","Interpretación"],q:[
+["Tu base de ventas tiene fechas vacías y duplicados. ¿Qué haces antes de analizar?",[["Analizas igual para no perder tiempo",0],["Limpias, documentas los criterios y validas los totales",3],["Eliminas todas las filas con problemas",1]],1],
+["Las ventas subieron 20% tras una campaña. ¿Qué concluyes?",[["La campaña causó el aumento",1],["Comparas con otros factores (temporada, precios) antes de afirmar la causa",3],["Nada, los datos no sirven",0]],0],
+["Debes presentar resultados a la gerencia. ¿Qué eliges?",[["Una tabla de 200 filas",0],["Un gráfico simple con la conclusión y la recomendación",3],["Todas las fórmulas utilizadas",1]],2]]},
+{n:"Servicio al cliente",e:"🎧",d:"Gestión de casos y herramientas",sk:["Gestión de casos","Conocimiento del producto","Uso de herramientas"],q:[
+["Un cliente molesto reclama un cobro doble. ¿Cuál es tu primera acción?",[["Explicar la política de cobros",1],["Escuchar, confirmar el caso y dar un plazo claro de solución",3],["Transferirlo a otra área",0]],0],
+["No sabes la respuesta a una pregunta técnica del producto. ¿Qué haces?",[["Respondes lo que crees",0],["Consultas la base de conocimiento o a un experto y devuelves la respuesta",3],["Le dices que no puedes ayudar",0]],1],
+["Tras cada llamada, ¿qué haces en el CRM?",[["Registrar el caso, el motivo y los acuerdos de seguimiento",3],["Nada, lo recuerdas",0],["Solo anotar el nombre",1]],2]]},
+{n:"Analista de selección de talento",e:"🌱",d:"Selección humana y objetiva",sk:["Evaluación de perfiles","Proceso de selección","Ética y normativa"],q:[
+["Tienes 80 hojas de vida para una vacante. ¿Cómo empiezas?",[["Lees solo las primeras 10",0],["Defines criterios del cargo y filtras con una matriz",3],["Eliges por la universidad",0]],0],
+["En la entrevista, ¿qué pregunta aporta más evidencia?",[["¿Dónde te ves en 5 años?",1],["Cuéntame una situación real en la que resolviste un conflicto",3],["¿Eres una persona responsable?",0]],1],
+["Un candidato te cuenta que está embarazada. ¿Cómo decides?",[["Descartas el perfil",0],["Evalúas solo competencias y mantienes la confidencialidad",3],["Le pides una prueba de embarazo",0]],2]]}];
+ROLES.push(
+{n:"Ingeniero/a de sistemas",e:"🖥️",d:"Infraestructura, incidentes y seguridad",sk:["Infraestructura","Gestión de incidentes","Seguridad informática"],q:[
+["El servidor principal dejó de responder en horario laboral. ¿Qué haces primero?",[["Reiniciarlo sin revisar nada",1],["Revisar monitoreo y logs, avisar a los afectados y activar el plan de contingencia",3],["Esperar a que alguien más lo reporte",0]],1],
+["Debes proteger la base de datos de la empresa. ¿Qué copia de seguridad es la adecuada?",[["Una copia semanal en el mismo servidor",0],["Copias manuales cuando te acuerdes",1],["Copias automáticas en otra ubicación, con pruebas periódicas de restauración",3]],0],
+["Un usuario recibe un correo que le pide su contraseña con un enlace extraño. ¿Qué haces?",[["Le dices que lo ignore",1],["Analizas el enlace, bloqueas el remitente, cambias claves y capacitas al equipo",3],["Reenvías el correo a todos como alerta",0]],2]]},
+{n:"Contador/a público/a",e:"🧾",d:"Normativa, análisis financiero y ética",sk:["Normativa tributaria","Análisis financiero","Control y ética"],q:[
+["Se acerca el vencimiento de la declaración de renta de un cliente y faltan soportes. ¿Qué haces?",[["Presentas con valores estimados",0],["Pides prórroga sin avisar al cliente",1],["Solicitas los soportes a tiempo, validas la norma y planeas un cronograma",3]],0],
+["Los gastos superaron 15% el presupuesto. ¿Cómo procedes?",[["Reportas solo el total",0],["Analizas por rubro, identificas causas y propones acciones",3],["Recortas gastos al azar",1]],1],
+["Te piden ajustar un registro contable para que el balance se vea mejor. ¿Qué haces?",[["Lo ajustas para evitar problemas",0],["Te niegas, explicas la norma y dejas constancia de la solicitud",3],["Lo haces solo esta vez",0]],2]]},
+{n:"Asesor/a comercial",e:"💼",d:"Prospección, negociación y seguimiento",sk:["Prospección","Negociación","Seguimiento"],q:[
+["Tienes 100 contactos y poco tiempo. ¿Cómo priorizas?",[["Llamas en orden alfabético",0],["Solo escribes a conocidos",1],["Segmentas por interés y probabilidad de compra y empiezas por los más prometedores",3]],0],
+["El cliente dice que tu precio es muy alto. ¿Qué respondes?",[["Bajas el precio de inmediato",0],["Preguntas qué compara, muestras el valor y buscas una opción acorde",3],["Insistes en que es el mejor precio",1]],1],
+["Cerraste una venta. ¿Qué sigue?",[["Nada, ya vendiste",0],["Esperar a que el cliente llame",1],["Confirmar la entrega, registrar en el CRM y programar seguimiento",3]],2]]}
+);
+var S={},R,idx,qs,xp,streak,tm,left;
+function $(i){return document.getElementById(i)}
+function show(id){["s-start","s-play","s-end","s-admin"].forEach(function(s){$(s).classList.toggle("hide",s!==id)});window.scrollTo(0,0)}
+ROLES.forEach(function(r,i){var b=document.createElement("button");b.className="role";b.innerHTML='<span class="e">'+r.e+'</span><b>'+r.n+'</b><small>'+r.d+'</small>';b.onclick=function(){start(i)};$("roles").appendChild(b)});
+function start(i){
+  R=ROLES[i];S={};xp=0;streak=0;idx=0;
+  R.sk.concat(SOFT).forEach(function(k){S[k]=[0,0]});
+  qs=R.q.map(function(q){return{q:q[0],o:q[1],k:R.sk[q[2]],t:"Técnica"}}).concat(SQ.map(function(q){return{q:q[0],o:q[1],k:SOFT[(SQ.indexOf(q))],t:"Blanda"}}));
+  $("h-name").textContent=$("nm").value.trim()||"Talento";$("h-role").textContent=R.e+" "+R.n;$("h-xp").textContent=0;
+  show("s-play");ask();
+}
+function ask(){
+  var q=qs[idx];$("tag").textContent="Misión "+(idx+1)+" de "+qs.length+" · "+q.t+" · "+q.k;
+  $("q").textContent=q.q;$("fb").textContent="";$("next").classList.add("hide");$("prog").style.width=(idx/qs.length*100)+"%";
+  $("h-st").innerHTML=streak>1?"Racha: <b>x"+streak+"</b>":"";
+  var o=$("opts");o.innerHTML="";
+  q.o.forEach(function(op,i){var b=document.createElement("button");b.className="opt";b.textContent=op[0];b.onclick=function(){answer(i)};o.appendChild(b)});
+  left=30;tick(true);clearInterval(tm);tm=setInterval(function(){left--;tick();if(left<=0){clearInterval(tm);answer(-1)}},1000);
+}
+function tick(r){$("timer").firstElementChild.style.width=(left/30*100)+"%"}
+function answer(i){
+  clearInterval(tm);var q=qs[idx],p=i<0?0:q.o[i][1],bt=Math.max.apply(null,q.o.map(function(x){return x[1]}));
+  S[q.k][0]+=p;S[q.k][1]+=3;
+  if(p===3){streak++}else{streak=0}
+  var g=p*10+(p===3&&streak>1?5:0)+(i>=0&&left>15&&p>0?2:0);xp+=g;$("h-xp").textContent=xp;
+  Array.prototype.forEach.call($("opts").children,function(b,j){b.disabled=true;if(q.o[j][1]===bt)b.classList.add("best");else if(j===i)b.classList.add("pick")});
+  $("fb").textContent=i<0?"Se acabó el tiempo. La mejor opción está resaltada.":p===3?"¡Excelente decisión! +"+g+" XP":p>0?"Decisión parcial. +"+g+" XP. Mira la opción mejor valorada.":"Esta opción no es la más adecuada. Revisa la mejor valorada.";
+  $("next").textContent=idx===qs.length-1?"Ver resultados":"Siguiente misión";$("next").classList.remove("hide");$("next").focus();
+}
+$("next").onclick=function(){idx++;idx<qs.length?ask():end()};
+function pct(keys){var a=0,b=0;keys.forEach(function(k){a+=S[k][0];b+=S[k][1]});return b?Math.round(a/b*100):0}
+function lvl(p){return p>=80?"Avanzado":p>=55?"Intermedio":"En desarrollo"}
+function end(){
+  $("prog").style.width="100%";
+  var t=pct(R.sk),b=pct(SOFT),all=Math.round((t+b)/2);
+  $("r-title").textContent=R.n;$("r-level").textContent="Nivel "+lvl(all)+" · "+all+"%";
+  $("r-msg").textContent=all>=80?"¡Felicidades! Tu perfil es muy sólido para este cargo.":all>=55?"Vas por buen camino. Con algo de práctica estarás listo/a para el cargo.":"Tienes una base para crecer. Sigue practicando y vuelve a jugar.";
+  $("r-t").textContent=t+"%";$("r-b").textContent=b+"%";$("b-t").style.width=t+"%";$("b-b").style.width=b+"%";$("r-xp").textContent=xp;
+  var keys=R.sk.concat(SOFT),n=keys.length,h="",pts=[];
+  [1,.5].forEach(function(f){h+='<polygon fill="none" stroke="currentColor" stroke-opacity=".25" points="'+keys.map(function(_,i){var a=-Math.PI/2+i*2*Math.PI/n;return(50+45*f*Math.cos(a)).toFixed(1)+","+(50+45*f*Math.sin(a)).toFixed(1)}).join(" ")+'"/>'});
+  keys.forEach(function(k,i){var a=-Math.PI/2+i*2*Math.PI/n,v=S[k][1]?S[k][0]/S[k][1]:0;
+    pts.push((50+45*v*Math.cos(a)).toFixed(1)+","+(50+45*v*Math.sin(a)).toFixed(1));
+    var lx=50+57*Math.cos(a),ly=50+55*Math.sin(a),an=Math.cos(a)>.3?"start":Math.cos(a)<-.3?"end":"middle";
+    h+='<text x="'+lx.toFixed(1)+'" y="'+ly.toFixed(1)+'" text-anchor="'+an+'">'+k+'</text>'});
+  h+='<polygon points="'+pts.join(" ")+'" fill="rgba(24,195,230,.35)" stroke="#18c3e6" stroke-width="1.5"/>';
+  $("radar").innerHTML=h;
+  var low=keys.slice().sort(function(a,b){return S[a][0]/S[a][1]-S[b][0]/S[b][1]}),REC={"Comunicación":"Practica explicar ideas con ejemplos y confirma que te entendieron.","Trabajo en equipo":"Habla primero con tu equipo antes de escalar un problema.","Adaptabilidad":"Ante un cambio, evalúa el impacto y ajusta el plan en vez de resistirte.","Liderazgo":"Apóyate en evidencia y criterios para guiar decisiones del grupo."};
+  $("rec").innerHTML=low.slice(0,3).map(function(k){return"<li><b>"+k+" ("+Math.round(S[k][0]/S[k][1]*100)+"%):</b> "+(REC[k]||"Refuerza esta habilidad con práctica guiada y estudia casos reales del cargo.")+"</li>"}).join("");
+  saveRec({ts:Date.now(),name:$("h-name").textContent,role:R.n,t:t,b:b,all:all,xp:xp});
+  show("s-end");
+}
+$("again").onclick=function(){show("s-start")};
+$("go-game").onclick=function(){show("s-start")};
+$("go-contact").onclick=function(){show("s-start");$("contacto").scrollIntoView()};
+/* Administrador: acceso de demostración en el navegador (no es seguridad real) */
+var ADM={u:"admin",p:"Bloom2026!"},ALL=[];
+function loadLocal(){try{return JSON.parse(localStorage.getItem("bq_results")||"[]")}catch(e){return[]}}
+function saveRec(rec){try{var a=loadLocal();a.push(rec);localStorage.setItem("bq_results",JSON.stringify(a))}catch(e){}
+  if(typeof claude!=="undefined"){claude.use("db").then(function(db){if(db)return db.collection("results").doc(String(rec.ts)).set(rec)}).catch(function(){})}}
+async function fetchAll(){var m={};loadLocal().forEach(function(r){m[r.ts]=r});
+  try{if(typeof claude!=="undefined"){var db=await claude.use("db");if(db){var s=await db.collection("results").get();s.docs.forEach(function(d){var r=d.data();if(r&&r.ts)m[r.ts]=r})}}}catch(e){}
+  return Object.keys(m).map(function(k){return m[k]}).sort(function(a,b){return b.ts-a.ts})}
+$("go-admin").onclick=function(){show("s-admin")};
+$("a-go").onclick=async function(){
+  if($("a-u").value.trim()===ADM.u&&$("a-p").value===ADM.p){$("a-err").textContent="";$("a-login").classList.add("hide");$("a-panel").classList.remove("hide");ALL=await fetchAll();
+    var f=$("a-f");f.innerHTML="";["Todos los cargos"].concat(ROLES.map(function(r){return r.n})).forEach(function(n,i){var o=document.createElement("option");o.value=i?n:"";o.textContent=n;f.appendChild(o)});drawAdmin()}
+  else $("a-err").textContent="Usuario o contraseña incorrectos."};
+$("a-f").onchange=function(){drawAdmin()};
+$("a-out").onclick=function(){$("a-p").value="";$("a-panel").classList.add("hide");$("a-login").classList.remove("hide")};
+function drawAdmin(){var f=$("a-f").value,rows=ALL.filter(function(r){return!f||r.role===f}),tb=document.querySelector("#a-t tbody");tb.innerHTML="";
+  rows.forEach(function(r){var tr=document.createElement("tr");[new Date(r.ts).toLocaleString("es-CO"),r.name,r.role,r.t+"%",r.b+"%",r.all+"%",lvl(r.all)].forEach(function(v){var td=document.createElement("td");td.textContent=v;tr.appendChild(td)});tb.appendChild(tr)});
+  $("a-n").textContent=rows.length;$("a-avg").textContent=(rows.length?Math.round(rows.reduce(function(a,r){return a+r.all},0)/rows.length):0)+"%";
+  $("a-empty").textContent=rows.length?"":"Aún no hay evaluaciones registradas."}
+$("theme").onclick=function(){var r=document.documentElement,l=r.dataset.theme==="light"||(!r.dataset.theme&&matchMedia("(prefers-color-scheme:light)").matches);r.dataset.theme=l?"dark":"light"};
+</script>
+</body>
+</html>
